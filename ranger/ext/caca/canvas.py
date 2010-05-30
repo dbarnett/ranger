@@ -1,8 +1,9 @@
-# pulled from http://www.bitbucket.org/mu_mind/pycaca, r10:37c9c00f0474
+# pulled from http://www.bitbucket.org/mu_mind/pycaca, r11:b97c9bd8e08a
 
 from . import _caca
 
 import ctypes, struct
+import sys
 
 __all__ = ['Canvas', 'CuculBuffer']
 
@@ -51,15 +52,19 @@ class Canvas(object):
     def get_size(self):
         return (self.get_width(), self.get_height())
 
-    def _default_dither(self, w, h):
-        return _caca.caca_create_dither(32, w, h, 4*w, 0xff<<16, 0xff<<8, 0xff, 0xff<<24)
+    def _rgba_dither(self, w, h):
+        if sys.byteorder == 'big':
+            rgba_mask = [0xff<<24, 0xff<<16, 0xff<<8, 0xff]
+        else:
+            rgba_mask = [0xff, 0xff<<8, 0xff<<16, 0xff<<24]
+        return _caca.caca_create_dither(32, w, h, 4*w, *rgba_mask)
 
     def put_pil_image(self, x, y, w, h, img):
         w_px, h_px = img.size
         n_pixels = (w_px*h_px)
         pixels_array = (ctypes.c_int * n_pixels)()
         ctypes.memmove(pixels_array, img.convert('RGBA').tostring(), n_pixels*4)
-        dither = self._default_dither(w_px, h_px)
+        dither = self._rgba_dither(w_px, h_px)
         _caca.caca_dither_bitmap(self._internal, x, y, w, h, dither, pixels_array)
 
     def export(self, fmt="ansi"):
