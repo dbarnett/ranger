@@ -1,0 +1,127 @@
+Ranger v.1.3.0
+==============
+
+Ranger is a free console file manager that gives you greater flexibility
+and a good overview of your files without having to leave your *nix console.
+It visualizes the directory tree in two dimensions: the directory hierarchy
+on one, lists of files on the other, with a preview to the right so you know
+where you'll be going.
+
+The default keys are similar to those of Vim, Emacs and Midnight Commander,
+though Ranger is easily controllable with just the arrow keys or the mouse.
+
+The program is written in Python (2.6 or 3.1) and uses curses for the
+text-based user interface.
+
+
+About
+-----
+
+* Author:          Roman Zimbelmann  <romanz@lavabit.com>
+* Website:         http://savannah.nongnu.org/projects/ranger
+* License:         GNU General Public License Version 3
+
+* Download URL of the newest stable version:
+http://git.savannah.gnu.org/cgit/ranger.git/snapshot/ranger-stable.tar.gz
+
+* Git Clone URL:
+git clone http://git.sv.gnu.org/r/ranger.git
+
+
+Design Goals
+------------
+
+* An easily maintainable file manager in a high level language
+* A quick way to switch directories and browse the file system
+* Keep it small but useful, do one thing and do it well
+* Console based, with smooth integration into the unix shell
+
+
+Features
+--------
+
+* Multi-column display (Miller Columns)
+* Preview of the selected file/directory
+* Common file operations (create/chmod/copy/delete/...)
+* VIM-like console and hotkeys
+* Automatically determine file types and run them with correct programs
+* Change the directory of your shell after exiting ranger
+* Tabs, Bookmarks, Mouse support
+
+
+Dependencies
+------------
+
+* A *nix-like operating system
+* Python 2.6 or Python 3.1 with the curses module
+
+Optional:
+* The "file" program
+* A pager ("less" by default)
+
+
+Getting Started
+---------------
+
+Ranger can be started without installing.  Just run the executable (in
+a terminal.)  The switch "--clean" will prevent it from creating or
+accessing configuration files.
+
+Follow the instructions in the INSTALL file for installing ranger.
+
+After starting ranger, you should see 4 columns. The third one is the main
+column, the directory where you're currently at.  To the left you see the
+parent directories and to the right there's a preview of the object you're
+pointing at.  Now use the Arrow Keys to navigate, Enter to open a file
+or type Q to quit.
+
+To customize ranger, copy the files from ranger/defaults/ to ~/.config/ranger/
+and modify them according to your wishes.
+
+
+Usage Tips
+----------
+
+The author of ranger uses this function (in ~/.bashrc) to start ranger:
+function ranger-cd {
+  before="$(pwd)"
+  python2.6 /the/path/to/ranger/ranger.py --fail-unless-cd "$@" || return 0
+  after="$(grep \^\' ~/.config/ranger/bookmarks | cut -b3-)"
+  if [[ "$before" != "$after" ]]; then
+    cd "$after"
+  fi
+}
+bind '"\C-o":"ranger-cd\C-m"'
+
+This changes the directory after you close ranger and adds the shortcut
+<CTRL-O> for starting ranger.
+
+To change back to the previous directory, you can type: cd -
+
+
+Troubleshooting, Getting Help
+-----------------------------
+
+If you encounter an error, try running ranger with --debug.  This will
+sometimes display more detailed information about the error.  Also, try
+deactivating optimization:
+
+PYTHONOPTIMIZE="" ranger --debug
+
+Report bugs on savannah:  (please include as much information as possible)
+http://savannah.nongnu.org/bugs/?func=additem&group=ranger
+
+Ask questions on the mailing list:
+http://lists.nongnu.org/mailman/listinfo/ranger-users
+
+
+Further Reading
+---------------
+
+Check the man page for information on common features and hotkeys.
+
+The most detailed manual is accessible by pressing "?" from inside ranger.
+It is also available at ranger/help/, contained in the *.py files.
+
+The file ranger/defaults/keys.py contains all key combinations, so that's
+another place you may want to check out.
